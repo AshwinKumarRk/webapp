@@ -1,12 +1,8 @@
 const { Router } = require("express");
 const router = Router()
+const users = require('../controllers/user.controller')
 
-router.get('/', (req, res) => {
-    res.send("Handling GET request")
-})
-
-router.post('/', (req, res) => {
-    res.send("Handling POST request")
-})
+//Route to navigate to requests
+router.post('/', users.create)
 
 module.exports = router

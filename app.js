@@ -1,10 +1,18 @@
 const express = require("express")
+const bodyParser = require('body-parser')
+const db = require("./api/models");
+const userRoute = require('./api/routes/user.route')
 const app = express()
 
-const userRoute = require('./api/routes/user.route')
+require('dotenv').config();
 
-app.listen(3000, () => {
+app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.json())
+
+app.listen(process.env.PORT || 3000, () => {
     console.log("Connected");
 })
 
 app.use('/users', userRoute)
+
+db.sequelize.sync();
