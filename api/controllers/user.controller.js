@@ -4,6 +4,40 @@ const {v4: uuid} = require('uuid');
 const bcrypt = require('bcrypt');
 const bAuth = require('basic-auth');
 const auth = require("basic-auth");
+const validator = require("email-validator");
+
+//Create a user with a unique id
+exports.create = (req, res) => {
+    const uid = uuid()
+    password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10))
+
+    if(!req.body.username || !req.body.firstName || !req.body.lastName || !req.body.password){
+        res.status(400).send("Values of one or more fields are missing. Please enter and try again.")
+        return
+    }
+
+    if(req.body.id || req.body.createdAt || req.body.updatedAt){
+        res.status(400).send("ID, creation and updating times cannot be manually entered")
+        return
+    }
+
+    if(!validator.validate(req.body.username)){
+        res.status(400).send("Invalid username. Enter valid email id. Example: xxx@xxx.com")
+    }
+
+    const user = {
+        id: uid,
+        username: req.body.username,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        password: password
+    }
+
+    User.create(user)
+        .then(data => {
+            res.send("User created successfully!");
+        })
+}
 
 //Retrieve a user with unique id
 exports.findOne = (req, res) => {
@@ -41,25 +75,6 @@ exports.findOne = (req, res) => {
         res.status(500).send('Error')
     })
 
-}
-
-//Create a user with a unique id
-exports.create = (req, res) => {
-    const uid = uuid()
-    password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10))
-
-    const user = {
-        id: uid,
-        username: req.body.username,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        password: password
-    }
-
-    User.create(user)
-        .then(data => {
-            res.send(data);
-        })
 }
 
 //Update a user's data using unique id
