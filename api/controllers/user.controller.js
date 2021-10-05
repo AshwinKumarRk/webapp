@@ -38,3 +38,18 @@ exports.create = (req, res) => {
             res.send(data);
         })
 }
+
+//Update a user's data using unique id
+exports.update = (req, res) => {
+    const id = req.params.id
+
+    User.findOne({where: {id: id}})
+    .then(users => {
+        users.firstName = req.body.firstName,
+        users.lastName = req.body.lastName
+        users.password = req.body.password
+
+        users.save();
+        res.status(200).send(users);
+    })
+}
