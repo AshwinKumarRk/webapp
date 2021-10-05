@@ -1,6 +1,7 @@
 const db = require("../models");
 const User = db.users;
 const {v4: uuid} = require('uuid');
+const bcrypt = require('bcrypt')
 
 //Retrieve a user with unique id
 exports.findOne = (req, res) => {
@@ -24,13 +25,14 @@ exports.findOne = (req, res) => {
 //Create a user with a unique id
 exports.create = (req, res) => {
     const uid = uuid()
+    password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10))
 
     const user = {
         id: uid,
         username: req.body.username,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        password: req.body.password
+        password: password
     }
 
     User.create(user)
@@ -50,6 +52,8 @@ exports.update = (req, res) => {
         users.password = req.body.password
 
         users.save();
-        res.status(200).send(users);
+        res.status(200).json({
+            message: "User data updated successfully!"
+        });
     })
 }
