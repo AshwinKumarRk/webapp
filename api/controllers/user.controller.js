@@ -57,7 +57,7 @@ exports.create = (req, res) => {
     })
 }
 
-//Retrieve a user with unique id
+//Retrieve a user with basic authentication
 exports.findOne = (req, res) => {
     const user = auth(req)
 
@@ -65,7 +65,6 @@ exports.findOne = (req, res) => {
         res.status(403).send("Username / Password required for authentication")
     }
 
-    // const id = req.params.id
 
     //Verify user by username and password
     User.findOne({
@@ -99,9 +98,8 @@ exports.findOne = (req, res) => {
 
 }
 
-//Update a user's data using unique id
+//Update a user's data using basic authentication
 exports.update = (req, res) => {
-    // const id = req.params.id
     const user = auth(req)
 
     if (!user.name || !user.pass) {
