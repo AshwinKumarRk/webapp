@@ -1,6 +1,8 @@
 const db = require("../models");
 const User = db.users;
-const {v4: uuid} = require('uuid');
+const {
+    v4: uuid
+} = require('uuid');
 const bcrypt = require('bcrypt');
 const bAuth = require('basic-auth');
 const auth = require("basic-auth");
@@ -11,17 +13,20 @@ exports.create = (req, res) => {
     const uid = uuid()
     password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10))
 
-    if(!req.body.username || !req.body.firstName || !req.body.lastName || !req.body.password){
+    //Mandatory fields are checked if entered
+    if (!req.body.username || !req.body.firstName || !req.body.lastName || !req.body.password) {
         res.status(400).send("Values of one or more fields are missing. Please enter and try again.")
         return
     }
 
-    if(req.body.id || req.body.createdAt || req.body.updatedAt){
+    //Fields must be unable to edir
+    if (req.body.id || req.body.createdAt || req.body.updatedAt) {
         res.status(400).send("ID, creation and updating times cannot be manually entered")
         return
     }
 
-    if(!validator.validate(req.body.username)){
+    //Use email-validator to verify if username is a valid e-mail
+    if (!validator.validate(req.body.username)) {
         res.status(400).send("Invalid username. Enter valid email id. Example: xxx@xxx.com")
     }
 
@@ -33,47 +38,64 @@ exports.create = (req, res) => {
         password: password
     }
 
-    User.create(user)
-        .then(data => {
-            res.send("User created successfully!");
-        })
+    User.findOne({
+        where: {
+            "username": req.body.username
+        }
+    }).then(users => {
+        if (users) {
+            res.status(400).send("User already exists.")
+            return
+        } else {
+            User.create(user)
+                .then(data => {
+                    res.status(201).send("User created successfully!");
+                })
+        }
+    }).catch(err => {
+        res.status(500).send("Error")
+    })
 }
 
 //Retrieve a user with unique id
 exports.findOne = (req, res) => {
     const user = auth(req)
 
-    if(!user.name || !user.pass){
+    if (!user.name || !user.pass) {
         res.status(403).send("Username / Password required for authentication")
     }
 
     // const id = req.params.id
 
     //Verify user by username and password
-    User.findOne({where: {username: user.name}})
-    .then(users => {
-        if(users){
-            if(bcrypt.compareSync(user.pass, users.password)){
-                let userData = {
-                    id: users.id,
-                    username: users.username,
-                    firstName: users.firstName,
-                    lastName: users.lastName,
-                    account_created: users.createdAt,
-                    account_updated: users.updatedAt
+    User.findOne({
+            where: {
+                username: user.name
+            }
+        })
+        .then(users => {
+            if (users) {
+                if (bcrypt.compareSync(user.pass, users.password)) {
+                    let userData = {
+                        id: users.id,
+                        username: users.username,
+                        firstName: users.firstName,
+                        lastName: users.lastName,
+                        account_created: users.createdAt,
+                        account_updated: users.updatedAt
+                    }
+                    res.status(200).send(userData)
+                } else {
+                    res.status(401).send('Incorrect Username/Password combination')
+                    return
                 }
-                res.status(200).send(userData)
             } else {
-                res.status(401).send('You are not authorized to access this data')
+                res.status(404).send('User does not exist')
                 return
             }
-        } else {
-            res.status(404).send('User does not exist')
-            return
-        }        
-    }).catch(err => {
-        res.status(500).send('Error')
-    })
+        }).catch(err => {
+            res.status(500).send('Error')
+        })
 
 }
 
@@ -82,39 +104,42 @@ exports.update = (req, res) => {
     // const id = req.params.id
     const user = auth(req)
 
-    if(!user.name || !user.pass){
+    if (!user.name || !user.pass) {
         res.status(403).send("Username / Password required for authentication")
     }
 
-    User.findOne({where: {username: user.name}})
-    .then(users => {
-        if(users){
-            if(bcrypt.compareSync(user.pass, users.password)){
-                if(req.body.id || req.body.username || req.body.createdAt || req.body.updateAt){
-                    res.status(400).send("Some of the fields you are trying to update are restricted")
-                }
-                password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10))
-                users.firstName = req.body.firstName,
-                users.lastName = req.body.lastName
-                users.password = password
-        
-                try{
-                    users.save();
-                    res.status(200).send("User data updated successfully!");
-                } catch(err) {
-                    res.status(500).send(err)
+    User.findOne({
+            where: {
+                username: user.name
+            }
+        })
+        .then(users => {
+            if (users) {
+                if (bcrypt.compareSync(user.pass, users.password)) {
+                    if (req.body.id || req.body.username || req.body.createdAt || req.body.updateAt) {
+                        res.status(400).send("Some of the fields you are trying to update are restricted")
+                    }
+                    password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10))
+                    users.firstName = req.body.firstName,
+                        users.lastName = req.body.lastName
+                    users.password = password
+
+                    try {
+                        users.save();
+                        res.status(200).send("User data updated successfully!");
+                    } catch (err) {
+                        res.status(500).send(err)
+                    }
+                } else {
+                    res.status(401).send("Incorrect Username/Password combination")
+                    return
                 }
             } else {
-                res.status(401).send("You are not authorized to access this data")
+                res.status(404).send('User does not exist')
                 return
             }
-        } else {
-            res.status(404).send('User does not exist')
-            return
-        }
 
-    }).catch(err => {
-        res.status(500).send('Error')
-    })
+        }).catch(err => {
+            res.status(500).send('Error')
+        })
 }
-
