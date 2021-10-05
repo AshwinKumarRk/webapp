@@ -118,7 +118,14 @@ exports.update = (req, res) => {
                 if (bcrypt.compareSync(user.pass, users.password)) {
                     if (req.body.id || req.body.username || req.body.createdAt || req.body.updateAt) {
                         res.status(400).send("Some of the fields you are trying to update are restricted")
+                        return
                     }
+
+                    if (!req.body.password || !req.body.firstName || !req.body.lastName) {
+                        res.status(400).send("Please enter all the required data")
+                        return
+                    }
+
                     password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10))
                     users.firstName = req.body.firstName,
                         users.lastName = req.body.lastName
