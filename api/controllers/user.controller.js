@@ -27,6 +27,7 @@ exports.create = (req, res) => {
     const uid = uuid()
     const password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10))
 
+
     const user = {
         id: uid,
         username: req.body.username,
@@ -52,6 +53,8 @@ exports.update = (req, res) => {
         users.password = req.body.password
 
         users.save();
-        res.status(200).send(users);
+        res.status(200).json({
+            message: "User data updated successfully!"
+        });
     })
 }
