@@ -48,15 +48,15 @@ Only the following data can be updated:
 
 1. Open a git supported terminal
 2. Clone the application repository 
-     git clone https://github.com/username/gitrepo_name
+     `git clone https://github.com/username/gitrepo_name`
 3. Navigate to the cloned folder using 
-     cd directory_name
+     `cd directory_name`
 4. Initialize the node environment using
-     npm init
+     `npm init`
 5. Install the packages mentioned above using 
-     npm i --save packagename
+     `npm i --save packagename`
 6. Install nodemon globally using
-     npm i -g nodemon
+     `npm i -g nodemon`
 7. Create a database using SQL workbench 
 8. Create a new .env file and supply the following information
     1. Database Host
@@ -65,4 +65,34 @@ Only the following data can be updated:
     4. Database User
     5. Server Host
 9.  Run the application using
-     npm start
+     `npm start`
+
+## Running the application
+
+1. Once the application starts running, open Postman to run the API requests
+   
+2. To create a user, set the address to **localhost:3000/users** and provide the following data in json format
+   ```
+   username: "xxx@yyy.com"
+   firstName: "xxx"
+   lastName: "yyy"
+   password: "xxxyyy"
+   ```
+
+3. To get a user, 
+    1. Set the address to **localhost:3000/users/self** 
+    2. In Authorization tab, select Basic auth and provide username and password 
+    3. Send the GET request to retrieve user data
+   
+4. To update a user,
+    1. Set the address to **localhost:3000/users/self**
+    2. In Authorization tab, select Basic auth and provide username and password
+    3. provide the necessary data to be updated in json format
+      ```
+      firstName: "xxx"
+      lastName: "yyy"
+      password: "xxxyyyzzz"
+      ```
+5. To run test cases for the application, enter the following in the terminal,
+     `npm test`
+   
