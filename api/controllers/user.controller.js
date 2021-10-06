@@ -1,8 +1,6 @@
 const db = require("../models");
 const User = db.users;
-const {
-    v4: uuid
-} = require('uuid');
+const { v4: uuid } = require('uuid');
 const bcrypt = require('bcrypt');
 const bAuth = require('basic-auth');
 const auth = require("basic-auth");
@@ -11,15 +9,17 @@ const validator = require("email-validator");
 //Create a user with a unique id
 exports.create = (req, res) => {
     const uid = uuid()
+
+    //Encrypting password using bcrypt with 10 salt rounds
     password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10))
 
-    //Mandatory fields are checked if entered
+    //Mandatory fields are checked if they are entered
     if (!req.body.username || !req.body.firstName || !req.body.lastName || !req.body.password) {
         res.status(400).send("Values of one or more fields are missing. Please enter and try again.")
         return
     }
 
-    //Fields must be unable to edir
+    //Fields must be unable to edited
     if (req.body.id || req.body.createdAt || req.body.updatedAt) {
         res.status(400).send("ID, creation and updating times cannot be manually entered")
         return
@@ -124,9 +124,10 @@ exports.update = (req, res) => {
                         return
                     }
 
+                    //Encrypting password using bcrypt with 10 salt rounds
                     password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10))
-                    users.firstName = req.body.firstName,
-                        users.lastName = req.body.lastName
+                    users.firstName = req.body.firstName
+                    users.lastName = req.body.lastName
                     users.password = password
 
                     try {
