@@ -49,7 +49,13 @@ exports.create = (req, res) => {
         } else {
             User.create(user)
                 .then(data => {
-                    res.status(201).send("User created successfully!");
+                    let userData = {
+                        id: data.id,
+                        username: data.username,
+                        firstName: data.firstName,
+                        lastName: data.lastName
+                    }
+                    res.status(201).send(userData);
                 })
         }
     }).catch(err => {
