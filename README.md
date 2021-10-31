@@ -4,9 +4,10 @@ Web application developed with NodeJS and Express with MySQL as the database to 
 
 ## The API consist of 3 requests: 
 
-POST: Used to create a new user
-GET : Used to retrieve user data with authentication
+POST: Used to create a new user / upload image
+GET : Used to retrieve user data / image data with authentication
 PUT: Used to update user data with authentication
+DELETE: Used to delete user image from S3 with authentication
 
 ## The web application has the functionality to perform the following functions:
 
@@ -71,7 +72,7 @@ Only the following data can be updated:
 
 1. Once the application starts running, open Postman to run the API requests
    
-2. To create a user, set the address to **localhost:3000/users** and provide the following data in json format
+2. To create a user, set the address to **<ip_address>:3000/v1/user** and provide the following data in json format
    ```
    username: "xxx@yyy.com"
    firstName: "xxx"
@@ -80,12 +81,12 @@ Only the following data can be updated:
    ```
 
 3. To get a user, 
-    1. Set the address to **localhost:3000/users/self** 
+    1. Set the address to **<ip_address>:3000/v1/user/self** 
     2. In Authorization tab, select Basic auth and provide username and password 
     3. Send the GET request to retrieve user data
    
 4. To update a user,
-    1. Set the address to **localhost:3000/users/self**
+    1. Set the address to **<ip_address>:3000/v1/user/self**
     2. In Authorization tab, select Basic auth and provide username and password
     3. provide the necessary data to be updated in json format
       ```
@@ -93,6 +94,23 @@ Only the following data can be updated:
       lastName: "yyy"
       password: "xxxyyyzzz"
       ```
-5. To run test cases for the application, enter the following in the terminal,
+
+5. To upload an image for a user,
+   1. Set the address to **<ip_address>:3000/v1/user/self/pic**
+   2. In Authorization tab, select Basic auth and provide username and password
+   3. Select binary as body and select image to upload
+   4. Send the POST request to upload image to S3 for the user
+   
+6. To delete an image for a user
+   1. Set the address to **<ip_address>:3000/v1/user/self/pic**
+   2. In Authorization tab, select Basic auth and provide username and password
+   3. Send the DELETE request to delete image from S3 for the user
+
+7. To get an image for a user
+   1. Set the address to **<ip_address>:3000/v1/user/self/pic**
+   2. In Authorization tab, select Basic auth and provide username and password
+   3. Send the GET request to retrieve data about the image from S3 for the user
+
+8. To run test cases for the application, enter the following in the terminal,
      `npm test`
    
