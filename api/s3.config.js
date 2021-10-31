@@ -4,8 +4,8 @@ const s3Client = new AWS.S3({});
 
 const Parameters = {
   Bucket: process.env.S3_BUCKET,
-  Key: '', // pass key
-  Body: null, // pass file body
+  Key: '', 
+  Body: null,
 };
 
 const s3 = {};

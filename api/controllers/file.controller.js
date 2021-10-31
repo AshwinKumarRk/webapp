@@ -79,3 +79,48 @@ exports.createFile = async (req, res) => {
         }
     })
 }
+
+exports.deleteFile = (req, res) => {
+    const userAuth = auth(req);
+
+    if (!userAuth.name || !userAuth.pass) {
+        return res.status(403).send("Username / Password required for authentication");
+    }
+
+    User.findOne({
+        where: {
+            username: userAuth.name
+        }
+    }).then(user => {
+        if (user) {
+            if (bcrypt.compareSync(userAuth.pass, user.password)) {
+                File.findOne({
+                    where: {
+                        user_id: user.id
+                    }
+                }).then(file => {
+                    // console.log(file);
+                    s3Client.deleteObject({
+                        Key: file.dataValues.s3_object_name,
+                        Bucket: process.env.S3_BUCKET
+                    }, (err, data) => {
+                        if (err) {
+                            // console.log(err);
+                            res.sendStatus(500);
+                            return;
+                        } else {
+                            file.destroy();
+                            return res.sendStatus(204);
+                        }
+                    })
+                })
+
+            } else {
+                res.status(401).send("Incorrect Credentials")
+            }
+        } else {
+            res.status(404).send("User not found")
+        }
+    })
+}
+
