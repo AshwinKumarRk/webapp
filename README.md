@@ -1,6 +1,6 @@
 # Cloud-6225-WebApp
 
-Web application developed with NodeJS and Express with MySQL as the database to store all the user data. Sequelize ORM is used to manage the MySQL database without the need to type excessive SQL code. 
+Web application developed with NodeJS and Express with MySQL as the database to store all the user data. Sequelize ORM is used to manage the MySQL database without the need to type excessive SQL code..
 
 ## The API consist of 3 requests: 
 
