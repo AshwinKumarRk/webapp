@@ -6,8 +6,10 @@ const bcrypt = require('bcrypt');
 const auth = require("basic-auth");
 const s3 = require('../s3.config');
 const { s3Client } = require("../s3.config");
+const metrics = require("../../metrics")
 
 exports.createFile = async (req, res) => {
+    metrics.increment("FILE_POST")
     const userAuth = auth(req);
     const params = s3.Parameters
     params.Body = req.body
@@ -81,6 +83,7 @@ exports.createFile = async (req, res) => {
 }
 
 exports.deleteFile = (req, res) => {
+    metrics.increment("FILE_DELETE")
     const userAuth = auth(req);
 
     if (!userAuth.name || !userAuth.pass) {
@@ -125,6 +128,7 @@ exports.deleteFile = (req, res) => {
 }
 
 exports.findFile = (req, res) => {
+    metrics.increment("FILE_GET")
     const userAuth = auth(req);
 
     if (!userAuth.name || !userAuth.pass) {
