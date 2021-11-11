@@ -9,6 +9,8 @@ const metrics = require("../../metrics");
 //Create a user with a unique id
 exports.create = (req, res) => {
     metrics.increment("USER_POST")
+    let timer_api = new Date()
+    let timer_db = new Date()
     const uid = uuid()
 
     //Encrypting password using bcrypt with 10 salt rounds
@@ -50,6 +52,7 @@ exports.create = (req, res) => {
         } else {
             User.create(user)
                 .then(data => {
+                    metrics.timing("DB_USER_POST", timer_db)
                     let userData = {
                         id: data.id,
                         username: data.username,
@@ -59,6 +62,7 @@ exports.create = (req, res) => {
                     res.status(201).send(userData);
                 })
         }
+        metrics.timing("USER_POST", timer_api)
     }).catch(err => {
         res.status(500).send("Error")
     })
@@ -67,6 +71,8 @@ exports.create = (req, res) => {
 //Retrieve a user with basic authentication
 exports.findOne = (req, res) => {
     metrics.increment("USER_GET")
+    let timer_api = new Date()
+    let timer_db = new Date()
     const user = auth(req)
 
     if (!user.name || !user.pass) {
@@ -82,6 +88,7 @@ exports.findOne = (req, res) => {
         })
         .then(users => {
             if (users) {
+                metrics.timing("DB_USER_GET", timer_db)
                 if (bcrypt.compareSync(user.pass, users.password)) {
                     let userData = {
                         id: users.id,
@@ -92,6 +99,7 @@ exports.findOne = (req, res) => {
                         account_updated: users.updatedAt
                     }
                     res.status(200).send(userData)
+                    metrics.timing("USER_GET", timer_api)
                 } else {
                     res.status(401).send('Incorrect Username/Password combination')
                     return
@@ -109,6 +117,8 @@ exports.findOne = (req, res) => {
 //Update a user's data using basic authentication
 exports.update = (req, res) => {
     metrics.increment("USER_PUT")
+    let timer_api = new Date()
+    let timer_db = new Date()
     const user = auth(req)
 
     if (!user.name || !user.pass) {
@@ -141,7 +151,9 @@ exports.update = (req, res) => {
 
                     try {
                         users.save();
+                        metrics.timing("DB_USER_PUT", timer_db)
                         res.status(200).send("User data updated successfully!");
+                        metrics.timing("USER_PUT", timer_api)
                     } catch (err) {
                         res.status(500).send(err)
                     }
