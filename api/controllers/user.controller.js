@@ -2,12 +2,13 @@ const db = require("../models");
 const User = db.users;
 const { v4: uuid } = require('uuid');
 const bcrypt = require('bcrypt');
-const bAuth = require('basic-auth');
 const auth = require("basic-auth");
 const validator = require("email-validator");
+const metrics = require("../../metrics");
 
 //Create a user with a unique id
 exports.create = (req, res) => {
+    metrics.increment("USER_POST")
     const uid = uuid()
 
     //Encrypting password using bcrypt with 10 salt rounds
@@ -65,6 +66,7 @@ exports.create = (req, res) => {
 
 //Retrieve a user with basic authentication
 exports.findOne = (req, res) => {
+    metrics.increment("USER_GET")
     const user = auth(req)
 
     if (!user.name || !user.pass) {
@@ -106,6 +108,7 @@ exports.findOne = (req, res) => {
 
 //Update a user's data using basic authentication
 exports.update = (req, res) => {
+    metrics.increment("USER_PUT")
     const user = auth(req)
 
     if (!user.name || !user.pass) {
