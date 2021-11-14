@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const auth = require("basic-auth");
 const validator = require("email-validator");
 const metrics = require("../../metrics");
+const logger = require("../../logger")
 
 //Create a user with a unique id
 exports.create = (req, res) => {
@@ -41,6 +42,7 @@ exports.create = (req, res) => {
         password: password
     }
 
+    logger.info("User Search in progress...")
     User.findOne({
         where: {
             "username": req.body.username
@@ -50,6 +52,7 @@ exports.create = (req, res) => {
             res.status(400).send("User already exists.")
             return
         } else {
+            logger.info("User Creation in progress...")
             User.create(user)
                 .then(data => {
                     metrics.timing("DB_USER_POST", timer_db)
@@ -61,6 +64,7 @@ exports.create = (req, res) => {
                     }
                     res.status(201).send(userData);
                 })
+                logger("User has been created!")
         }
         metrics.timing("USER_POST", timer_api)
     }).catch(err => {
@@ -79,8 +83,8 @@ exports.findOne = (req, res) => {
         res.status(403).send("Username / Password required for authentication")
     }
 
-
     //Verify user by username and password
+    logger.info("User Search in progress...")
     User.findOne({
             where: {
                 username: user.name
@@ -100,6 +104,7 @@ exports.findOne = (req, res) => {
                     }
                     res.status(200).send(userData)
                     metrics.timing("USER_GET", timer_api)
+                    logger.info("User Found!")
                 } else {
                     res.status(401).send('Incorrect Username/Password combination')
                     return
@@ -125,6 +130,7 @@ exports.update = (req, res) => {
         res.status(403).send("Username / Password required for authentication")
     }
 
+    logger.info("User Search in progress...")
     User.findOne({
             where: {
                 username: user.name
@@ -132,6 +138,7 @@ exports.update = (req, res) => {
         })
         .then(users => {
             if (users) {
+                logger.info("User Found")
                 if (bcrypt.compareSync(user.pass, users.password)) {
                     if (req.body.id || req.body.username || req.body.createdAt || req.body.updateAt) {
                         res.status(400).send("Some of the fields you are trying to update are restricted")
@@ -154,6 +161,7 @@ exports.update = (req, res) => {
                         metrics.timing("DB_USER_PUT", timer_db)
                         res.status(200).send("User data updated successfully!");
                         metrics.timing("USER_PUT", timer_api)
+                        logger.info("User successfully updated")
                     } catch (err) {
                         res.status(500).send(err)
                     }

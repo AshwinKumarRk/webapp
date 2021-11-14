@@ -7,6 +7,7 @@ const auth = require("basic-auth");
 const s3 = require('../s3.config');
 const { s3Client } = require("../s3.config");
 const metrics = require("../../metrics")
+const logger = require("../../logger")
 
 exports.createFile = async (req, res) => {
     metrics.increment("FILE_POST")
@@ -19,12 +20,14 @@ exports.createFile = async (req, res) => {
         return res.status(403).send("Username / Password required for authentication");
     }
 
+    logger.info("User Search in progress...")
     User.findOne({
         where: {
             username: userAuth.name
         }
     }).then(async user => {
         if (user) {
+            logger.info("User Found!")
             if (bcrypt.compareSync(userAuth.pass, user.password)) {
                 File.findOne({
                     where: {
@@ -45,6 +48,7 @@ exports.createFile = async (req, res) => {
                     })
                 })
 
+                logger.info("File upload in progress...")
                 await File.create({
                     file_id: uid,
                     file_name: user.id + ".jpeg",
@@ -73,6 +77,7 @@ exports.createFile = async (req, res) => {
                         res.send(fileData);
                     })
                 });
+                logger.info("File upload complete!")
             } else {
                 res.status(401).send("Incorrect Credentials")
             }
@@ -90,19 +95,21 @@ exports.deleteFile = (req, res) => {
         return res.status(403).send("Username / Password required for authentication");
     }
 
+    logger.info("User Search in progress...")
     User.findOne({
         where: {
             username: userAuth.name
         }
     }).then(user => {
         if (user) {
+            logger.info("User Found!")
             if (bcrypt.compareSync(userAuth.pass, user.password)) {
                 File.findOne({
                     where: {
                         user_id: user.id
                     }
                 }).then(file => {
-                    // console.log(file);
+                    logger.info("File deletion in progress...")
                     s3Client.deleteObject({
                         Key: file.dataValues.s3_object_name,
                         Bucket: process.env.S3_BUCKET
@@ -113,6 +120,7 @@ exports.deleteFile = (req, res) => {
                             return;
                         } else {
                             file.destroy();
+                            logger.info("File deletion complete!")
                             return res.sendStatus(204);
                         }
                     })
@@ -135,18 +143,21 @@ exports.findFile = (req, res) => {
         return res.status(403).send("Username / Password required for authentication");
     }
 
+    logger.info("User search in progress...")
     User.findOne({
         where: {
             username: userAuth.name
         }
     }).then(user => {
         if (user) {
+            logger.info("User Found")
             if (bcrypt.compareSync(userAuth.pass, user.password)) {
                 File.findOne({
                     where: {
                         user_id: user.id
                     }
                 }).then(file => {
+                    logger.info("File found!")
                     let fileData = {
                         id: file.dataValues.file_id,
                         file_name: file.dataValues.file_name,
