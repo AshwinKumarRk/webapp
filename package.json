@@ -29,7 +29,8 @@
     "multer-s3": "^2.10.0",
     "mysql2": "^2.3.0",
     "sequelize": "^6.6.5",
-    "statsd-client": "^0.4.7"
+    "statsd-client": "^0.4.7",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "bcrypt": "^5.0.1",
