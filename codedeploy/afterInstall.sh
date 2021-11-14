@@ -2,7 +2,7 @@
 # cd /home/ubuntu/webapp
 # sudo rm *.zip
 cd /home/ubuntu/webapp/
-unzip -o webapp.zip
+sudo unzip -o webapp.zip
 
 sudo cp /home/ubuntu/webapp/cloudwatch-config.json /opt/aws/amazon-cloudwatch-agent/etc/
 sleep 10
