@@ -1,7 +1,7 @@
 #!/bin/sh
 # cd /home/ubuntu/webapp
 # sudo rm *.zip
-while [ ! -f check.txt ];
+while [ ! -f /check.txt ];
 do
   sleep 5
 done
