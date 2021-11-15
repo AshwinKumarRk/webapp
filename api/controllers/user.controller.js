@@ -64,7 +64,7 @@ exports.create = (req, res) => {
                     }
                     res.status(201).send(userData);
                 })
-                logger("User has been created!")
+                logger.info("User has been created!")
         }
         metrics.timing("USER_POST", timer_api)
     }).catch(err => {
