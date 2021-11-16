@@ -14,6 +14,9 @@ exports.createFile = async (req, res) => {
     const userAuth = auth(req);
     const params = s3.Parameters
     params.Body = req.body
+    let timer_api = new Date()
+    let timer_db = new Date()
+    let timer_s3 = new Date()
     let uid = uuid();
 
     if (!userAuth.name || !userAuth.pass) {
@@ -55,6 +58,7 @@ exports.createFile = async (req, res) => {
                     s3_object_name: process.env.S3_BUCKET + "/" + user.id + ".jpeg",
                     user_id: user.id
                 }).then(file => {
+                    metrics.timing("DB_FILE_POST", timer_db)
                     params.Key = file.dataValues.s3_object_name
                 })
 
@@ -67,6 +71,7 @@ exports.createFile = async (req, res) => {
                             file_id: uid
                         }
                     }).then(file => {
+                        metrics.timing("FILE_UPLOAD_TO_S3")
                         let fileData = {
                             id: file.dataValues.file_id,
                             file_name: file.dataValues.file_name,
@@ -78,6 +83,7 @@ exports.createFile = async (req, res) => {
                     })
                 });
                 logger.info("File upload complete!")
+                metrics.timing("FILE_POST", timer_api)
             } else {
                 res.status(401).send("Incorrect Credentials")
             }
@@ -89,6 +95,9 @@ exports.createFile = async (req, res) => {
 
 exports.deleteFile = (req, res) => {
     metrics.increment("FILE_DELETE")
+    let timer_api = new Date()
+    let timer_db = new Date()
+
     const userAuth = auth(req);
 
     if (!userAuth.name || !userAuth.pass) {
@@ -120,7 +129,9 @@ exports.deleteFile = (req, res) => {
                             return;
                         } else {
                             file.destroy();
+                            metrics.timing("DB_FILE_DELETE", timer_db)
                             logger.info("File deletion complete!")
+                            metrics.timing("FILE_DELETE", timer_api)
                             return res.sendStatus(204);
                         }
                     })
@@ -137,6 +148,8 @@ exports.deleteFile = (req, res) => {
 
 exports.findFile = (req, res) => {
     metrics.increment("FILE_GET")
+    let timer_api = new Date()
+    let timer_db = new Date()
     const userAuth = auth(req);
 
     if (!userAuth.name || !userAuth.pass) {
@@ -157,6 +170,7 @@ exports.findFile = (req, res) => {
                         user_id: user.id
                     }
                 }).then(file => {
+                    metrics.timing("DB_FILE_GET", timer_db)
                     logger.info("File found!")
                     let fileData = {
                         id: file.dataValues.file_id,
@@ -165,6 +179,7 @@ exports.findFile = (req, res) => {
                         user_id: file.dataValues.user_id,
                         upload_date: (file.dataValues.createdAt).toISOString().split('T')[0]
                     }
+                    metrics.timing("FILE_GET", timer_api)
                     res.send(fileData);
                 })
 
