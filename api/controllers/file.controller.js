@@ -71,7 +71,7 @@ exports.createFile = async (req, res) => {
                             file_id: uid
                         }
                     }).then(file => {
-                        metrics.timing("FILE_UPLOAD_TO_S3")
+                        metrics.timing("FILE_UPLOAD_TO_S3", timer_s3)
                         let fileData = {
                             id: file.dataValues.file_id,
                             file_name: file.dataValues.file_name,
