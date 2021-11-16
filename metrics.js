@@ -41,4 +41,8 @@ sdc.timing("DB_FILE_POST")
 sdc.timing("DB_FILE_GET")
 sdc.timing("DB_FILE_DELETE")
 
+//FILE S3 ACCESS TIMES
+
+sdc.timing("FILE_UPLOAD_TO_S3")
+
 module.exports = sdc;
