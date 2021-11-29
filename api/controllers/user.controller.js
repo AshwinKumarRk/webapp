@@ -62,15 +62,17 @@ exports.create = (req, res) => {
                     //     region: "us-east-1"
                     //   });
                       logger.info("config done");
-                    let params = {
+                    var params = { 
                         MessageStructure: 'json',
                         Message: JSON.stringify({
+                          "default": JSON.stringify({
                             "email": data.username,
-                            "token": data.id,
-                            "message-type": "Verification"
+                            "token": data.id              
+                          }),
                         }),
+              
                         TopicArn: config.SNS_TOPIC
-                    }
+                      };
                     logger.info("update");
                     let publishTextPromise = new AWS.SNS({ apiVersion: '2010-03-31' }).publish(params).promise();
                     publishTextPromise.then(
