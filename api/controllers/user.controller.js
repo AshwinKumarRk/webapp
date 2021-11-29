@@ -77,7 +77,6 @@ exports.create = (req, res) => {
                     publishTextPromise.then(
                         data => {
                           logger.info(`Message sent to SNS :  ${params.TopicArn}`);
-                          logger.info("MessageID is " + data.MessageId);
                           return res.send("Success")
                         }).catch(
                           err => {
