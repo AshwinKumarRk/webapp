@@ -87,13 +87,6 @@ exports.create = (req, res) => {
                           logger.info(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
                           console.log(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
                           console.log("MessageID is " + data.MessageId);
-                          let userData = {
-                            id: data.id,
-                            username: data.username,
-                            firstName: data.firstName,
-                            lastName: data.lastName
-                        }
-                        res.status(201).send(userData);
                         }).catch(
                           function(err) {
                             logger.info(`Error in publish`);
@@ -101,7 +94,13 @@ exports.create = (req, res) => {
                           res.status(500).send("Internal server error");
                         });
 
-                    
+                    let userData = {
+                        id: data.id,
+                        username: data.username,
+                        firstName: data.firstName,
+                        lastName: data.lastName
+                    }
+                    res.status(201).send(userData);
                 })
                 logger.info("User has been created!")
         }
