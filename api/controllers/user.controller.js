@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const auth = require("basic-auth");
 const validator = require("email-validator");
 var AWS = require('aws-sdk')
+AWS.config.update({region: 'us-east-1'});
 const metrics = require("../../metrics");
 const logger = require("../../logger");
 const Config = require("../config");
@@ -79,7 +80,7 @@ exports.create = (req, res) => {
                           TopicArn: Config.SNS_TOPIC
                       };
                        logger.info("update");
-                    var publishTextPromise = new AWS.SNS().publish(params).promise();
+                    var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(params).promise();
                     publishTextPromise.then(
                         function(data) {
                           logger.info(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
@@ -87,8 +88,7 @@ exports.create = (req, res) => {
                           console.log("MessageID is " + data.MessageId);
                         }).catch(
                           function(err) {
-                            logger.info(`Error in publish`);
-                          console.error(err, err.stack);
+                            logger.info(err);
                           res.status(500).send("Internal server error");
                         });
 
