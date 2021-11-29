@@ -76,9 +76,9 @@ exports.create = (req, res) => {
                       var params = { 
                           Message: 'test',
                           Subject: 'run',
-                          TopicArn: config.SNS_TOPIC
+                          TopicArn: 'arn:aws:sns:us-east-1:101014783999:CSYE6225-SNS-Topic'
                       };
-                    logger.info("update");
+                       logger.info("update");
                     let publishTextPromise = new AWS.SNS({ apiVersion: '2010-03-31' }).publish(params).promise();
                     publishTextPromise.then(
                         function(data) {
