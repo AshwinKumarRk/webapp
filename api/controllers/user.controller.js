@@ -72,7 +72,7 @@ exports.create = (req, res) => {
                         }),
                         TopicArn: config.SNS_TOPIC
                     }
-
+                    logger.info(JSON.stringify(params));
                     let publishTextPromise = new AWS.SNS({ apiVersion: '2010-03-31' }).publish(params).promise();
                     publishTextPromise.then(
                         function(data) {
