@@ -7,7 +7,7 @@ const validator = require("email-validator");
 var AWS = require('aws-sdk')
 const metrics = require("../../metrics");
 const logger = require("../../logger");
-let config = require("../config");
+const config = require("dotenv");
 
 //Create a user with a unique id
 exports.create = (req, res) => {
@@ -87,6 +87,13 @@ exports.create = (req, res) => {
                           logger.info(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
                           console.log(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
                           console.log("MessageID is " + data.MessageId);
+                          let userData = {
+                            id: data.id,
+                            username: data.username,
+                            firstName: data.firstName,
+                            lastName: data.lastName
+                        }
+                        res.status(201).send(userData);
                         }).catch(
                           function(err) {
                             logger.info(`Error in publish`);
@@ -94,13 +101,6 @@ exports.create = (req, res) => {
                           res.status(500).send("Internal server error");
                         });
 
-                        let userData = {
-                            id: data.id,
-                            username: data.username,
-                            firstName: data.firstName,
-                            lastName: data.lastName
-                        }
-                        res.status(201).send(userData);
                     
                 })
                 logger.info("User has been created!")
@@ -153,7 +153,7 @@ exports.findOne = (req, res) => {
                 return
             }
         }).catch(err => {
-            res.status(500).send('Server Error')
+            res.status(500).send('Error')
         })
 
 }
