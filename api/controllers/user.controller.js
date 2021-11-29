@@ -77,9 +77,9 @@ exports.create = (req, res) => {
                     publishTextPromise.publish(params, (err, data) => {
                         if(!err){
                             logger.info(`Message sent to SNS :  ${params.TopicArn}`);
-                            return res.send("Success")
+                            logger.info("Success", data)
                         } else {
-                            return res.send("Failed")
+                            logger.info("Failed")
                         }
                         })
 
