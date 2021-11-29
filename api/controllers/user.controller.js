@@ -74,14 +74,14 @@ exports.create = (req, res) => {
                     }
 
                     let publishTextPromise = new AWS.SNS({ apiVersion: '2010-03-31' }).publish(params).promise();
-                    publishTextPromise.publish(params, (err, data) => {
-                        if(!err){
-                            logger.info(`Message sent to SNS :  ${params.TopicArn}`);
-                            logger.info("Success", data)
-                        } else {
-                            logger.info("Failed")
-                        }
-                        })
+                    publishTextPromise.then(
+                        function(data) {
+                          console.log(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
+                          console.log("MessageID is " + data.MessageId);
+                        }).catch(
+                          function(err) {
+                          console.error(err, err.stack);
+                        });
 
                     let userData = {
                         id: data.id,
