@@ -57,6 +57,9 @@ exports.create = (req, res) => {
             User.create(user)
                 .then(data => {
                     metrics.timing("DB_USER_POST", timer_db)
+                    AWS.config.update({
+                        region: "us-east-1"
+                      });
 
                     let params = {
                         MessageStructure: 'json',
