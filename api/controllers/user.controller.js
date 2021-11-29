@@ -76,6 +76,7 @@ exports.create = (req, res) => {
                     let publishTextPromise = new AWS.SNS({ apiVersion: '2010-03-31' }).publish(params).promise();
                     publishTextPromise.then(
                         function(data) {
+                            logger.info(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
                           console.log(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
                           console.log("MessageID is " + data.MessageId);
                         }).catch(
