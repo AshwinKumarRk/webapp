@@ -6,7 +6,8 @@ const auth = require("basic-auth");
 const validator = require("email-validator");
 var AWS = require('aws-sdk')
 const metrics = require("../../metrics");
-const logger = require("../../logger")
+const logger = require("../../logger");
+const { config } = require("dotenv");
 
 //Create a user with a unique id
 exports.create = (req, res) => {
@@ -76,13 +77,14 @@ exports.create = (req, res) => {
                       var params = { 
                           Message: 'test',
                           Subject: 'run',
-                          TopicArn: 'arn:aws:sns:us-east-1:101014783999:CSYE6225-SNS-Topic'
+                          TopicArn: config.SNS_TOPIC
                       };
+                      logger.info(config.SNS_TOPIC)
                        logger.info("update");
                     let publishTextPromise = new AWS.SNS({ apiVersion: '2010-03-31' }).publish(params).promise();
                     publishTextPromise.then(
                         function(data) {
-                            logger.info(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
+                          logger.info(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
                           console.log(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
                           console.log("MessageID is " + data.MessageId);
                           let userData = {
