@@ -7,7 +7,7 @@ const validator = require("email-validator");
 var AWS = require('aws-sdk')
 const metrics = require("../../metrics");
 const logger = require("../../logger");
-const config = require("../config");
+let config = require("../config");
 
 //Create a user with a unique id
 exports.create = (req, res) => {
@@ -153,7 +153,7 @@ exports.findOne = (req, res) => {
                 return
             }
         }).catch(err => {
-            res.status(500).send('Error')
+            res.status(500).send('Server Error')
         })
 
 }
