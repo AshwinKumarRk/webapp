@@ -56,6 +56,7 @@ exports.create = (req, res) => {
             logger.info("User Creation in progress...")
             User.create(user)
                 .then(data => {
+                    logger.info("user created");
                     metrics.timing("DB_USER_POST", timer_db)
                     AWS.config.update({
                         region: "us-east-1"
@@ -72,25 +73,28 @@ exports.create = (req, res) => {
                         }),
                         TopicArn: config.SNS_TOPIC
                     }
-                    logger.info(JSON.stringify(params));
+                    logger.info("update"+JSON.stringify(params));
                     let publishTextPromise = new AWS.SNS({ apiVersion: '2010-03-31' }).publish(params).promise();
                     publishTextPromise.then(
                         function(data) {
                             logger.info(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
                           console.log(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
                           console.log("MessageID is " + data.MessageId);
+                          let userData = {
+                            id: data.id,
+                            username: data.username,
+                            firstName: data.firstName,
+                            lastName: data.lastName
+                        }
+                        res.status(201).send(userData);
                         }).catch(
                           function(err) {
+                            logger.info(`Error in publish`);
                           console.error(err, err.stack);
+                          res.status(500).send("Internal server error");
                         });
 
-                    let userData = {
-                        id: data.id,
-                        username: data.username,
-                        firstName: data.firstName,
-                        lastName: data.lastName
-                    }
-                    res.status(201).send(userData);
+                    
                 })
                 logger.info("User has been created!")
         }
