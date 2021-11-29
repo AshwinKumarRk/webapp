@@ -76,11 +76,10 @@ exports.create = (req, res) => {
                     //   };
                       var params = { 
                           Message: 'test',
-                          Subject: 'run',
                           TopicArn: Config.SNS_TOPIC
                       };
                        logger.info("update");
-                    let publishTextPromise = new AWS.SNS().publish(params).promise();
+                    var publishTextPromise = new AWS.SNS().publish(params).promise();
                     publishTextPromise.then(
                         function(data) {
                           logger.info(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
