@@ -7,7 +7,7 @@ const validator = require("email-validator");
 var AWS = require('aws-sdk')
 const metrics = require("../../metrics");
 const logger = require("../../logger");
-const config = require("dotenv");
+const Config = require("../config");
 
 //Create a user with a unique id
 exports.create = (req, res) => {
@@ -77,9 +77,9 @@ exports.create = (req, res) => {
                       var params = { 
                           Message: 'test',
                           Subject: 'run',
-                          TopicArn: config.SNS_TOPIC
+                          TopicArn: Config.SNS_TOPIC
                       };
-                      logger.info(config.SNS_TOPIC)
+                      logger.info(Config.SNS_TOPIC)
                        logger.info("update");
                     let publishTextPromise = new AWS.SNS({ apiVersion: '2010-03-31' }).publish(params).promise();
                     publishTextPromise.then(
