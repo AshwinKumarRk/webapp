@@ -62,16 +62,21 @@ exports.create = (req, res) => {
                     //     region: "us-east-1"
                     //   });
                       logger.info("config done");
-                    var params = { 
-                        MessageStructure: 'json',
-                        Message: JSON.stringify({
-                          "default": JSON.stringify({
-                            "email": data.username,
-                            "token": data.id              
-                          }),
-                        }),
+                    // var params = { 
+                    //     MessageStructure: 'json',
+                    //     Message: JSON.stringify({
+                    //       "default": JSON.stringify({
+                    //         "email": data.username,
+                    //         "token": data.id              
+                    //       }),
+                    //     }),
               
-                        TopicArn: config.SNS_TOPIC
+                    //     TopicArn: config.SNS_TOPIC
+                    //   };
+                      var params = { 
+                          Message: 'test',
+                          Subject: 'run',
+                          TopicArn: config.SNS_TOPIC
                       };
                     logger.info("update");
                     let publishTextPromise = new AWS.SNS({ apiVersion: '2010-03-31' }).publish(params).promise();
