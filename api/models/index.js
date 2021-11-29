@@ -1,9 +1,14 @@
 const Config = require("../config");
 
 const Sequelize = require("sequelize");
-const sequelize = new Sequelize(Config.DB, Config.USER, Config.PASSWORD, {
-  host: Config.HOST,
+const sequelize = new Sequelize(Config.DB, null, null, {
   dialect: Config.dialect,
+  replication: {
+    read: [
+      { host: Config.RR_HOST, username: Config.RR_USER, password: Config.RR_PASSWORD }
+    ],
+    write: { host: Config.HOST, username: Config.USER, password: Config.PASSWORD }
+  },
   operatorsAliases: false,
 });
 

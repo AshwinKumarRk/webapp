@@ -56,6 +56,30 @@ exports.create = (req, res) => {
             User.create(user)
                 .then(data => {
                     metrics.timing("DB_USER_POST", timer_db)
+
+                    // let params = {
+                    //     MessageStructure: 'json',
+                    //     Message: JSON.stringify({
+                    //         "default": JSON.stringify({
+                    //             "email": data.username,
+                    //             "token": data.id,
+                    //             "message-type": "Verification"
+                    //         })
+                    //     }),
+                    //     TopicArn: config.SNS_TOPIC
+                    // }
+
+                    // let publishTextPromise = new AWS.SNS({ apiVersion: '2010-03-31' }).publish(params).promise();
+                    // publishTextPromise.then(
+                    //     data => {
+                    //       logger.info(`Message sent to SNS :  ${params.TopicArn}`);
+                    //       logger.info("MessageID is " + data.MessageId);
+                    //       return res.send("Success")
+                    //     }).catch(
+                    //       err => {
+                    //         return res.send("Failed")
+                    //       })
+
                     let userData = {
                         id: data.id,
                         username: data.username,

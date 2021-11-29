@@ -6,6 +6,10 @@ module.exports = {
     USER: process.env.DB_USER,
     PASSWORD: process.env.DB_PASS,
     DB: process.env.DB_NAME,
+    RR_HOST: process.env.DB_RR_HOST,
+    RR_USER: process.env.DB_RR_USER,
+    RR_PASSWORD: process.env.DB_RR_PASS,
+    SNS_TOPIC: process.env.SNS_TOPIC_ARN,
     dialect: "mysql",
   };
   
