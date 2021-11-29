@@ -7,7 +7,7 @@ const validator = require("email-validator");
 var AWS = require('aws-sdk')
 const metrics = require("../../metrics");
 const logger = require("../../logger");
-const { config } = require("dotenv");
+const config = require("../config");
 
 //Create a user with a unique id
 exports.create = (req, res) => {
