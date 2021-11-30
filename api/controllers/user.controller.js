@@ -67,10 +67,8 @@ exports.create = (req, res) => {
                     var params = { 
                         MessageStructure: 'json',
                         Message: JSON.stringify({
-                          "default": JSON.stringify({
                             "email": data.username,
                             "token": data.id              
-                          }),
                         }),
               
                         TopicArn: config.SNS_TOPIC
