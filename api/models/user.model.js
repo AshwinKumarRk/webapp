@@ -28,7 +28,8 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: false
       },
       verified: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
       },
       verified_on: {
         type: Sequelize.DATE

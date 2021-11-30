@@ -59,25 +59,16 @@ exports.create = (req, res) => {
             User.create(user)
                 .then(data => {
                     logger.info("user created");
-                    logger.info(data)
                     metrics.timing("DB_USER_POST", timer_db)
-                    // AWS.config.update({
-                    //     region: "us-east-1"
-                    //   });
-                      logger.info("config done");
                     var params = { 
                         Message: JSON.stringify({
                             "email": data.username,
                             "token": data.id              
                         }),
-              
                         TopicArn: Config.SNS_TOPIC
                       };
-                    //   var params = { 
-                    //       Message: 'test',
-                    //       TopicArn: Config.SNS_TOPIC
-                    //   };
-                       logger.info("update");
+
+                    logger.info("params created");
                     var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(params).promise();
                     publishTextPromise.then(
                         function(data) {
@@ -94,7 +85,9 @@ exports.create = (req, res) => {
                         id: data.id,
                         username: data.username,
                         firstName: data.firstName,
-                        lastName: data.lastName
+                        lastName: data.lastName,
+                        verified: data.verified,
+                        verified_on: data.verified_on
                     }
                     res.status(201).send(userData);
                 })
@@ -134,7 +127,9 @@ exports.findOne = (req, res) => {
                         firstName: users.firstName,
                         lastName: users.lastName,
                         account_created: users.createdAt,
-                        account_updated: users.updatedAt
+                        account_updated: users.updatedAt,
+                        verified: data.verified,
+                        verified_on: data.verified_on
                     }
                     res.status(200).send(userData)
                     metrics.timing("USER_GET", timer_api)
