@@ -32,7 +32,8 @@ module.exports = (sequelize, Sequelize) => {
         defaultValue: false
       },
       verified_on: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: null
       }
     });
   
