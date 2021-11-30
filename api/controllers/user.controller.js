@@ -6,7 +6,7 @@ const auth = require("basic-auth");
 const validator = require("email-validator");
 var AWS = require('aws-sdk')
 AWS.config.update({region: 'us-east-1'});
-const dynamodb = new aws.DynamoDB.DocumentClient();
+const dynamodb = new AWS.DynamoDB.DocumentClient();
 const metrics = require("../../metrics");
 const logger = require("../../logger");
 const Config = require("../config");
