@@ -71,7 +71,7 @@ exports.create = (req, res) => {
                             "token": data.id              
                         }),
               
-                        TopicArn: config.SNS_TOPIC
+                        TopicArn: Config.SNS_TOPIC
                       };
                     //   var params = { 
                     //       Message: 'test',
