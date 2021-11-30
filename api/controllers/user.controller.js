@@ -59,13 +59,13 @@ exports.create = (req, res) => {
             User.create(user)
                 .then(data => {
                     logger.info("user created");
+                    logger.info(data)
                     metrics.timing("DB_USER_POST", timer_db)
                     // AWS.config.update({
                     //     region: "us-east-1"
                     //   });
                       logger.info("config done");
                     var params = { 
-                        MessageStructure: 'json',
                         Message: JSON.stringify({
                             "email": data.username,
                             "token": data.id              
