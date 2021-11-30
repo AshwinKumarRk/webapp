@@ -215,6 +215,8 @@ exports.verify = (req, res) => {
 
     let email = req.params.email
     let token = req.params.token
+    logger.info(email)
+    logger.info(token)
 
     logger.info("User Search in progress...")
     User.findOne({
@@ -260,6 +262,6 @@ exports.verify = (req, res) => {
             }
 
         }).catch(err => {
-            res.status(500).send('Error')
+            res.status(500).send(err, 'Error')
         })
 }
