@@ -129,8 +129,8 @@ exports.findOne = (req, res) => {
                         lastName: users.lastName,
                         account_created: users.createdAt,
                         account_updated: users.updatedAt,
-                        verified: data.verified,
-                        verified_on: data.verified_on
+                        verified: users.verified,
+                        verified_on: users.verified_on
                     }
                     res.status(200).send(userData)
                     metrics.timing("USER_GET", timer_api)
