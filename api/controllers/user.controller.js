@@ -232,7 +232,7 @@ exports.verify = (req, res) => {
                 let searchParams = {
                     TableName: "csye6225",
                     Key: {
-                    id:message.email,
+                    id: email,
                     }
                 };
 
