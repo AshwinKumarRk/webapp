@@ -8,12 +8,14 @@ sdc = new SDC({port: 8125});
 sdc.increment("USER_POST")
 sdc.increment("USER_GET")
 sdc.increment("USER_PUT")
+sdc.increment("USER_VERIFY")
 
 //USER API CALL TIMES
 
 sdc.timing("USER_POST");
 sdc.timing("USER_GET");
 sdc.timing("USER_PUT");
+sdc.timing("USER_VERIFY")
 
 //USER DATABASE TIMES
 
