@@ -144,7 +144,7 @@ exports.findOne = (req, res) => {
                 return
             }
         }).catch(err => {
-            res.status(500).send('Error')
+            res.status(500).send(err, 'Error')
         })
 
 }
