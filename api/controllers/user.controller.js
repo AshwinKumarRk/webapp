@@ -237,7 +237,9 @@ exports.verify = (req, res) => {
                 };
 
                 logger.info("params created")
+                logger.info(searchParams)
                 dynamodb.get(searchParams, (err, resp) => {
+                    logger.info(resp)
                     if(!err){
                         logger.info("entered dynamo")
                         if (resp.Item == null || resp.Item == undefined){
