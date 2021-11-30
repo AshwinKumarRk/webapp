@@ -242,7 +242,7 @@ exports.verify = (req, res) => {
                     logger.info(resp.Item)
                     if(!err){
                         logger.info("entered dynamo")
-                        if (resp.Item == null || resp.Item == undefined){
+                        if (resp.Item != null || resp.Item != undefined){
                             if(resp.Item.token == token){
                                 logger.info("matching")
                                 users.verified = true
