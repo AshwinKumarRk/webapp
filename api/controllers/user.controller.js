@@ -6,6 +6,7 @@ const auth = require("basic-auth");
 const validator = require("email-validator");
 var AWS = require('aws-sdk')
 AWS.config.update({region: 'us-east-1'});
+const dynamodb = new aws.DynamoDB.DocumentClient();
 const metrics = require("../../metrics");
 const logger = require("../../logger");
 const Config = require("../config");
@@ -198,6 +199,61 @@ exports.update = (req, res) => {
                     res.status(401).send("Incorrect Username/Password combination")
                     return
                 }
+            } else {
+                res.status(404).send('User does not exist')
+                return
+            }
+
+        }).catch(err => {
+            res.status(500).send('Error')
+        })
+}
+
+exports.verify = (req, res) => {
+    metrics.increment("USER_VERIFY")
+    let timer_api = new Date()
+
+    let email = req.params.email
+    let token = req.params.token
+
+    logger.info("User Search in progress...")
+    User.findOne({
+            where: {
+                username: email
+            }
+        })
+        .then(users => {
+            if (users) {
+                logger.info("User Found")
+                let searchParams = {
+                    TableName: "csye6225",
+                    Key: {
+                    id:message.email,
+                    }
+                };
+
+                dynamodb.get(searchParams, (err, resp) => {
+                    if(!err){
+                        if (resp.Item == null || resp.Item == undefined){
+                            if(resp.Item.token == token){
+                                users.verified = true
+                                users.verified_on = Date()
+                            } else {
+                                res.status(500).send("Verification invalid. Link Broken / Unauthorized access")
+                            }
+                            try {
+                                users.save();
+                                res.status(200).send("User verified successfully!");
+                                metrics.timing("USER_VERIFY", timer_api)
+                                logger.info("User successfully verified")
+                            } catch (err) {
+                                res.status(500).send(err)
+                            }
+                        } else {
+                            res.status(500).send("Token has expired. Request another one")
+                        }
+                    }
+                })
             } else {
                 res.status(404).send('User does not exist')
                 return
