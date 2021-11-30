@@ -6,6 +6,6 @@ const users = require('../controllers/user.controller')
 router.post('/', users.create)
 router.get('/self', users.findOne)
 router.put('/self', users.update)
-router.get('/verifyUserEmail/', users.verify)
+router.get('/verifyUserEmail', users.verify)
 
 module.exports = router
