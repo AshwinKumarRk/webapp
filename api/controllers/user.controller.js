@@ -212,7 +212,7 @@ exports.update = (req, res) => {
 exports.verify = (req, res) => {
     metrics.increment("USER_VERIFY")
     let timer_api = new Date()
-
+    logger.info(req.params);
     let email = req.params.email
     let token = req.params.token
     logger.info(email)
