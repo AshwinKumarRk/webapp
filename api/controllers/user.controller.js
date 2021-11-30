@@ -236,10 +236,13 @@ exports.verify = (req, res) => {
                     }
                 };
 
+                logger.info("params created")
                 dynamodb.get(searchParams, (err, resp) => {
                     if(!err){
+                        logger.info("entered dynamo")
                         if (resp.Item == null || resp.Item == undefined){
                             if(resp.Item.token == token){
+                                logger.info("matching")
                                 users.verified = true
                                 users.verified_on = Date()
                             } else {
