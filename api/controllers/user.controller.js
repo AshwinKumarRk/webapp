@@ -120,24 +120,28 @@ exports.findOne = (req, res) => {
         })
         .then(users => {
             if (users) {
-                metrics.timing("DB_USER_GET", timer_db)
-                if (bcrypt.compareSync(user.pass, users.password)) {
-                    let userData = {
-                        id: users.id,
-                        username: users.username,
-                        firstName: users.firstName,
-                        lastName: users.lastName,
-                        account_created: users.createdAt,
-                        account_updated: users.updatedAt,
-                        verified: users.verified,
-                        verified_on: users.verified_on
+                if(users.verified){
+                    if (bcrypt.compareSync(user.pass, users.password)) {
+                        metrics.timing("DB_USER_GET", timer_db)
+                        let userData = {
+                            id: users.id,
+                            username: users.username,
+                            firstName: users.firstName,
+                            lastName: users.lastName,
+                            account_created: users.createdAt,
+                            account_updated: users.updatedAt,
+                            verified: users.verified,
+                            verified_on: users.verified_on
+                        }
+                        res.status(200).send(userData)
+                        metrics.timing("USER_GET", timer_api)
+                        logger.info("User Found!")
+                    } else {
+                        res.status(401).send('Incorrect Username/Password combination')
+                        return
                     }
-                    res.status(200).send(userData)
-                    metrics.timing("USER_GET", timer_api)
-                    logger.info("User Found!")
                 } else {
-                    res.status(401).send('Incorrect Username/Password combination')
-                    return
+                    res.status(403).send("Please verify your account!")
                 }
             } else {
                 res.status(404).send('User does not exist')
@@ -169,35 +173,39 @@ exports.update = (req, res) => {
         .then(users => {
             if (users) {
                 logger.info("User Found")
-                if (bcrypt.compareSync(user.pass, users.password)) {
-                    if (req.body.id || req.body.username || req.body.createdAt || req.body.updateAt) {
-                        res.status(400).send("Some of the fields you are trying to update are restricted")
+                if(users.verified){
+                    if (bcrypt.compareSync(user.pass, users.password)) {
+                        if (req.body.id || req.body.username || req.body.createdAt || req.body.updateAt) {
+                            res.status(400).send("Some of the fields you are trying to update are restricted")
+                            return
+                        }
+    
+                        if (!req.body.password || !req.body.firstName || !req.body.lastName) {
+                            res.status(400).send("Please enter all the required data")
+                            return
+                        }
+    
+                        //Encrypting password using bcrypt with 10 salt rounds
+                        password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10))
+                        users.firstName = req.body.firstName
+                        users.lastName = req.body.lastName
+                        users.password = password
+    
+                        try {
+                            users.save();
+                            metrics.timing("DB_USER_PUT", timer_db)
+                            res.status(200).send("User data updated successfully!");
+                            metrics.timing("USER_PUT", timer_api)
+                            logger.info("User successfully updated")
+                        } catch (err) {
+                            res.status(500).send(err)
+                        }
+                    } else {
+                        res.status(401).send("Incorrect Username/Password combination")
                         return
-                    }
-
-                    if (!req.body.password || !req.body.firstName || !req.body.lastName) {
-                        res.status(400).send("Please enter all the required data")
-                        return
-                    }
-
-                    //Encrypting password using bcrypt with 10 salt rounds
-                    password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10))
-                    users.firstName = req.body.firstName
-                    users.lastName = req.body.lastName
-                    users.password = password
-
-                    try {
-                        users.save();
-                        metrics.timing("DB_USER_PUT", timer_db)
-                        res.status(200).send("User data updated successfully!");
-                        metrics.timing("USER_PUT", timer_api)
-                        logger.info("User successfully updated")
-                    } catch (err) {
-                        res.status(500).send(err)
                     }
                 } else {
-                    res.status(401).send("Incorrect Username/Password combination")
-                    return
+                    res.status(403).send('Please verify your account!')
                 }
             } else {
                 res.status(404).send('User does not exist')
@@ -236,15 +244,11 @@ exports.verify = (req, res) => {
                     }
                 };
 
-                logger.info("params created")
-                logger.info(searchParams)
                 dynamodb.get(searchParams, (err, resp) => {
-                    logger.info(resp.Item)
                     if(!err){
                         logger.info("entered dynamo")
                         if (resp.Item != null || resp.Item != undefined){
                             if(resp.Item.token == token){
-                                logger.info("matching")
                                 users.verified = true
                                 users.verified_on = Date()
                             } else {
