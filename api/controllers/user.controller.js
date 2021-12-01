@@ -241,6 +241,10 @@ exports.verify = (req, res) => {
                     TableName: "csye6225",
                     Key: {
                     id: email,
+                    },
+                    FilterExpression: 'TTL >= :currentEpoch',
+                    ExpressionAttributeValues: {
+                      ':currentEpoch': Date.now() / 1000
                     }
                 };
 
