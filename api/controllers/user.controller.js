@@ -237,17 +237,19 @@ exports.verify = (req, res) => {
                     TableName: "csye6225",
                     Key: {
                     id: email,
-                    },
-                    FilterExpression: 'ttl >= :currentEpoch',
-                    ExpressionAttributeValues: {
-                      ':currentEpoch': Date.now() / 1000
                     }
+                    // ,
+                    // FilterExpression: 'ttl >= :currentEpoch',
+                    // ExpressionAttributeValues: {
+                    //   ':currentEpoch': Date.now() / 1000
+                    // }
                 };
 
                 dynamodb.get(searchParams, (err, resp) => {
                     if(!err){
                         logger.info("entered dynamo")
-                        if (resp.Item != null || resp.Item != undefined){
+                        // if (resp.Item != null || resp.Item != undefined){
+                        if(resp.Item.ttl <= (Date.now() / 1000)){
                             if(resp.Item.token == token){
                                 users.verified = true
                                 users.verified_on = Date()
