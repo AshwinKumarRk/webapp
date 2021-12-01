@@ -249,7 +249,7 @@ exports.verify = (req, res) => {
                     if(!err){
                         logger.info("entered dynamo")
                         // if (resp.Item != null || resp.Item != undefined){
-                        if(resp.Item.ttl <= parseInt(Date.now() / 1000)){
+                        if(resp.Item.ttl >= parseInt(Date.now() / 1000)){
                             if(resp.Item.token == token){
                                 users.verified = true
                                 users.verified_on = Date()
