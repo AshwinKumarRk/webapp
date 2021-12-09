@@ -8,6 +8,8 @@ done
 
 cd /home/ubuntu/webapp/
 sudo unzip -o webapp.zip
+echo "Successfully unzipped new revision"
+pwd
 
 sudo cp /home/ubuntu/webapp/cloudwatch-config.json /opt/aws/amazon-cloudwatch-agent/etc/
 sleep 10
